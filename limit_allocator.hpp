@@ -27,6 +27,11 @@ struct rebind
             limit_allocator(size_t soft_limit, size_t hard_limit, const Alloc& alloc = Alloc());
             template <class X>
             limit_allocator(const rebind_alloc<X>& other);
+            limit_allocator(const limit_allocator<T,Alloc>& other) = default;
+            limit_allocator(limit_allocator<T,Alloc>&& other) = default;
+
+bool        operator == (const limit_allocator<T,Alloc>& other) const;
+bool        operator != (const limit_allocator<T,Alloc>& other) const;
 
 pointer     allocate(size_t n);
 void        deallocate(pointer p, size_t n) noexcept;
@@ -147,6 +152,18 @@ template <class X>
 limit_allocator<T,Alloc>::limit_allocator(const rebind_alloc<X>& other):
         m_impl(other.m_impl)
     {
+    }
+
+template <class T, class Alloc>
+bool limit_allocator<T,Alloc>::operator == (const limit_allocator<T,Alloc>& other) const
+    {
+    return m_impl == other.m_impl;
+    }
+
+template <class T, class Alloc>
+bool limit_allocator<T,Alloc>::operator != (const limit_allocator<T,Alloc>& other) const
+    {
+    return m_impl != other.m_impl;
     }
 
 template <class T, class Alloc>
