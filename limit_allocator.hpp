@@ -1,14 +1,15 @@
 #pragma once
 
 #include <memory>
+#include <atomic>
 
 template <class T, class Alloc = std::allocator<T>>
 class limit_allocator
 {
 public:
 using value_type = typename Alloc::value_type;
-using pointer = typename Alloc::pointer;
-using const_pointer = typename Alloc::const_pointer;
+using pointer = typename std::allocator_traits<Alloc>::pointer;
+using const_pointer = typename std::allocator_traits<Alloc>::const_pointer;
 using size_type = typename Alloc::size_type;
 
 template <class X>
@@ -56,9 +57,9 @@ using rebind_alloc = limit_allocator<X, basic_allocator<X>>;
 template <class X>
 using value_type = typename basic_allocator<X>::value_type;
 template <class X>
-using pointer = typename basic_allocator<X>::pointer;
+using pointer = typename std::allocator_traits<basic_allocator<X>>::pointer;
 template <class X>
-using const_pointer = typename basic_allocator<X>::const_pointer;
+using const_pointer = typename std::allocator_traits<basic_allocator<X>>::const_pointer;
 template <class X>
 using size_type = typename basic_allocator<X>::size_type;
 
@@ -84,7 +85,7 @@ protected:
 Alloc   m_alloc;
 size_t  m_soft_limit = 0;
 size_t  m_hard_limit = 0;
-size_t  m_used = 0;
+std::atomic<size_t> m_used = 0;
 }; // class limit_allocator<void>
 
 template <class Alloc>
